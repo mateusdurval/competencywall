@@ -1,0 +1,162 @@
+.body {
+    width: 100%;
+    height: 100vh;
+
+    background: #121214;
+}
+.body .container2 {
+    position: absolute;
+
+    top: 100px;
+    left: 320px;
+
+    width: 480px;
+    height: 600px;
+    padding: 4%;
+
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    
+    flex-direction: column;
+
+    border-radius: 7px;
+    background: #202024;
+}
+
+.body .container2 form {
+    width: 100%;
+}
+
+.body .container2 form h2 {
+    width: 100%;
+    color: #FFF;
+    margin-bottom: 10%;
+}
+
+.body .container2 form div {
+    margin-top: 4%;
+    width: 100%;
+
+    background-color: #121214;
+    border-radius: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.body .container2 form div i {
+    padding: 3%;
+    margin-left: 2%;
+    text-align: center;
+    color: #DAA520;
+}
+
+.body .container2 div input {
+    width: 93%;
+    padding: 4%;
+
+    background-color: transparent;
+
+    border: none;
+    border-radius: 5px;
+
+    color: #FFF;
+
+    font-size: 17px;
+}
+
+.body .container2 div input:focus {
+    border: 2px solid #DAA520
+}
+
+.body .container2 form .btn-cadastre {
+    background: none;
+    display: inline;
+}
+
+.body .container2 form .btn-cadastre p {
+    color: #ccc;
+    font-size: 14px;
+    margin-bottom: 5%;
+    margin-top: 6%;
+    text-align: center;
+}
+
+.body .container2 form .btn-cadastre span {
+    color: #DAA520;
+    font-weight: bold;
+}
+
+
+.body .container2 form .btn-cadastre button {
+    width: 100%;
+    padding: 4%;
+
+    margin-top: 4%;
+
+    border: none;
+    border-radius: 5px;
+
+    background: #DAA520;
+
+    color: #FFF;
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+    opacity: 0.9;
+
+    transition: all 0.3s;
+}
+
+.body .container2 form div button:hover {
+    background: #feba0f;
+    opacity: 1;
+}
+
+
+.body .container3 {
+    position: absolute;
+
+    right: 300px;
+    top: 80px;
+
+    width: 400px;
+}
+
+.body .container3 .logo_cw {
+    width: 200px;
+    height: 200px;
+}
+
+.body .container3 h2 {
+    color: #FFF;
+
+    font-weight: bold;
+    font-size: 33px;
+
+    text-align: left;
+
+    margin-bottom: 6%;
+}
+
+.body .container3 #btn-back {
+    font-weight: bold;
+    color: #DAA520;
+    text-decoration: none;
+
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.body .container3 #btn-back:hover {
+    color: #feba0f;
+    opacity: 1;
+}
+
+.body .container3 #btn-back i {
+    margin-right: 2%;
+}
