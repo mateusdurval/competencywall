@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 
 import api from '../../services/api';
 import { setTokenLogin } from '../../services/auth'
@@ -17,7 +17,15 @@ class Welcome extends React.Component {
         this.state = {
             email: '',
             password: '',
-            messageError: ''
+            messageError: '',
+            redirect: false,
+            user: {
+                createdAt: undefined,
+                email: undefined,
+                name: undefined,
+                _v: undefined,
+                _id: undefined
+            }
         }
 
         this.handleEmail = this.handleEmail.bind(this);
@@ -62,10 +70,11 @@ class Welcome extends React.Component {
 
             if (token) {
                 const response = setTokenLogin(token)
-                response ? 
-                    (<Home id={user._id} />)
-                : 
-                alert('erro')
+                if (response)  
+                    this.setState({ redirect: true, user: user })
+                else {
+                    this.setState({ messageError: message })
+                }
             } else {
                 this.setState({ messageError: message })
             }
@@ -76,10 +85,14 @@ class Welcome extends React.Component {
     }
 
     render() {
-        const { messageError } = this.state;
+        const { messageError, redirect, user } = this.state;
+
+        if (redirect) {
+            return <Redirect to={{pathname: '/app', user: user }} />
+        }
+
         return (
             <div className="body-welcome">
-
                 <div id="logo">
                     <Logo />
                 </div>
