@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { history } from '../../history'
-import './styles.css'
+
 import axios from 'axios'
+import { login } from '../../services/auth'
+
+import './welcome.css'
 
 import Logo from '../../assets/img/Logo'
 
@@ -46,12 +48,15 @@ class Welcome extends React.Component {
         ]        
 
         await axios.post('http://localhost:3000/auth/authenticate', request).then(resp => {
+            const { token, message } = resp.data
 
-            const {message, success, token} = resp.data
-
-            alert(message)
-            localStorage.setItem('app-token', token)
-            history.push('/home')
+            if (token) {
+                const response = login(token)
+                response ? this.props.history.push("/app") : this.props.history.push("/")
+            } else {
+                alert(message)
+            }
+            
         }).catch( err => {
             console.log(err)
         })
@@ -81,7 +86,7 @@ class Welcome extends React.Component {
 
                             <div id="create-account">
                                 <hr></hr>
-                                <p>Não tem uma conta? <Link to="/register">Registre-se</Link></p>
+                                <p>Não tem uma conta? <Link to="/register2">Registre-se</Link></p>
                             </div>
                         </form>
                     </div>
