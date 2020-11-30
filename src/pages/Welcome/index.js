@@ -1,8 +1,10 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-import axios from 'axios'
-import { login } from '../../services/auth'
+import api from '../../services/api';
+import { setTokenLogin } from '../../services/auth'
+
+import Home from '../Home'
 
 import './welcome.css'
 
@@ -14,13 +16,14 @@ class Welcome extends React.Component {
 
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            messageError: ''
         }
 
         this.handleEmail = this.handleEmail.bind(this);
         this.handlePassword = this.handlePassword.bind(this);
 
-        this.authenticate = this.authenticate.bind(this);
+        this.SubmitAuthenticate = this.SubmitAuthenticate.bind(this);
     }
 
     handleEmail(event) {
@@ -35,10 +38,17 @@ class Welcome extends React.Component {
         })
     }
 
-    async authenticate(event) {
+    async SubmitAuthenticate(event) {
         event.preventDefault()
 
         const { email, password } = this.state
+
+        if(email === '' && password === '') {
+            this.setState({
+                messageError: 'Informe um e-mail e senha válidos.'
+            })
+            return
+        }
     
         let request = [
             {
@@ -47,14 +57,17 @@ class Welcome extends React.Component {
             }
         ]        
 
-        await axios.post('http://localhost:3000/auth/authenticate', request).then(resp => {
-            const { token, message } = resp.data
+        await api.post('/auth/authenticate', request).then(resp => {
+            const { token, message, user } = resp.data
 
             if (token) {
-                const response = login(token)
-                response ? this.props.history.push("/app") : this.props.history.push("/")
+                const response = setTokenLogin(token)
+                response ? 
+                    (<Home id={user._id} />)
+                : 
+                alert('erro')
             } else {
-                alert(message)
+                this.setState({ messageError: message })
             }
             
         }).catch( err => {
@@ -63,14 +76,20 @@ class Welcome extends React.Component {
     }
 
     render() {
+        const { messageError } = this.state;
         return (
-            <div className="body">
-                <div className="logo">
-                    <Logo id="img" />
+            <div className="body-welcome">
+
+                <div id="logo">
+                    <Logo />
                 </div>
                 <div className="container">
+                    <div id="messageError">
+                        <p>{ messageError }</p>
+                    </div>
+                    
                     <div className="login">
-                        <form onSubmit={this.authenticate} className="form">
+                        <form onSubmit={this.SubmitAuthenticate} className="form">
                             <div>
                                 <i className="far fa-envelope"></i>
                                 <input id="email" type="email" name="email" placeholder="E-mail" autoComplete="off" onChange={this.handleEmail} />
@@ -86,7 +105,7 @@ class Welcome extends React.Component {
 
                             <div id="create-account">
                                 <hr></hr>
-                                <p>Não tem uma conta? <Link to="/register2">Registre-se</Link></p>
+                                <p>Não tem uma conta? <Link to="/register">Registre-se</Link></p>
                             </div>
                         </form>
                     </div>
@@ -95,8 +114,8 @@ class Welcome extends React.Component {
                         <p>&copy; Competency Wall 2020</p>
                         <p>Todos os direitos reservados.</p>
                     </div>
-
                 </div>
+
             </div>
         )
     }

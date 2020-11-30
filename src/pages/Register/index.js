@@ -1,148 +1,139 @@
-
-import React from 'react'
-import './styles.css'
-import axios from 'axios'
+import React from 'react';
 import { Link, Redirect } from 'react-router-dom'
 
+import api from '../../services/api';
+import { setTokenRegister } from "../../services/auth";
+
+import './register2.css'
 import Logo from '../../assets/img/Logo'
+
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+
+const SignupSchema = Yup.object().shape({
+    email: Yup.string()
+    .email('E-mail inválido.')
+    .required('É necessário informar um e-mail.'),
+    name: Yup.string()
+        .min(2, 'Insira um nome válido.')
+        .max(50, 'Muito longo.')
+        .required('É necessário informar um nome.'),
+    password: Yup.string()
+        .min(8, 'Senha deve conter 8 caracteres.')
+        .max(50, 'Too Long.')
+        .required('É necessário informar uma senha'),
+    ConfirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'As senhas devem ser iguais.')
+        .required('Confirme sua senha.')
+});
 
 class Register extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            email: undefined,
-            name: undefined,
-            password: undefined,
-            confirmPassword: undefined,
-            success: undefined,
-            message: undefined
+            messageError : '',
+            redirect: false
         }
-
-        this.handleEmail = this.handleEmail.bind(this);
-        this.handleName = this.handleName.bind(this);
-        this.handlePassword = this.handlePassword.bind(this);
-        this.handleConfirmPassword = this.handleConfirmPassword.bind(this);
-
-        this.register = this.register.bind(this);
     }
 
-    handleEmail(event) {
-        this.setState({
-            email: event.target.value
-        });
-    }
-
-    handleName(event) {
-        this.setState({
-            name: event.target.value
-        });
-    }
-
-    handlePassword(event) {
-        this.setState({
-            password: event.target.value
-        });
-    }
-
-    handleConfirmPassword(event) {
-        this.setState({
-            confirmPassword: event.target.value
-        });
-    }
-
-
-    register(event) {
-        event.preventDefault()
-        const { email, name, password, confirmPassword } = this.state
-        let request = [
-            {
-                email: email,
-                name: name,
-                password: password,
-                confirmPassword: confirmPassword
-            }
-        ]
+    cadastre = values => {
+        api.post('/auth/register', values).then(resp => {
+            const { token, message } = resp.data
     
-        axios.post('http://localhost:3000/auth/register', request).then(resp => {
-
-            const { success, message, token } = resp.data
-            this.setState({
-                success: success,
-                message: message
-            })
+            if (token) {
+                const response = setTokenRegister(token)
+                if (response)
+                    this.setState({ redirect: true })
+                else {
+                    this.setState({ messageError: 'Erro ao importar token' })
+                }   
+            } else {
+                this.setState({ messageError: message })
+            }
+            
         }).catch( err => {
             console.log(err)
         })
     }
 
     render() {
+        const { redirect, messageError } = this.state
         
+        if (redirect) {
+            return <Redirect to={'/app'} />
+        }
+
         return (
             <div className="body">
-                <section className="container2">
-                    <form onSubmit={this.register}>
-                        <p>{this.state.success}</p>
-                        {
-                            
-                            this.state.success !== undefined ? (
-                                this.state.success ? 
-                                    <div className="alert alert-success" role="alert">
-                                        {this.state.message}
-                                    </div>
-                                :   
-                                    <div className="alert alert-danger" role="alert">
-                                        {this.state.message}
-                                    </div>
-                            )   : ''
-                        }
-
-                        <h2>Crie sua conta</h2>
+                <div id="container">
+                    <h1>Crie sua conta</h1>
+                    <div id="messageError">
+                        <p>{messageError}</p>
+                    </div>
+                    <Formik
+                        initialValues={{
+                            email: '',
+                            name: '',
+                            password: '',
+                            ConfirmPassword: ''
+                        }}
+                        validationSchema={SignupSchema}
+                        onSubmit={(values) => this.cadastre(values)}
+                    >
                         
-                        <div>
-                            <i className="far fa-envelope"></i>
-                            <input id="email" type="email" name="email" placeholder="email@example.com" autoComplete="off" onChange={this.handleEmail} />
-                        </div>
-    
-                        <div>
-                            <i className="fas fa-user-alt"></i>
-                            <input id="name" type="text" name="name" placeholder="Rodrigo Araújo dos Santos" autoComplete="off" onChange={this.handleName} />
-                        </div>
-    
-                        <div>
-                            <i className="fas fa-lock"></i>
-                            <input id="password" type="password" name="password" placeholder="Sua senha" autoComplete="off" onChange={this.handlePassword} />
-                        </div>
-    
-                        <div>
-                            <i className="fas fa-lock"></i>
-                            <input id="confirmPassword" type="password" name="passwordConfirm" placeholder="Confirme sua senha" autoComplete="off" onChange={this.handleConfirmPassword} />
-                        </div>
-    
-                        <div className="btn-cadastre">
-                            <p>Ao se registrar, você aceita nossos <span>termos de uso</span> e a nossa <span>política de privacidade.</span></p>
-    
+                        {({ errors, touched }) => (
+                        <Form className="form">
+
+                                {errors.email && touched.email ? <span className="errors">{errors.email}</span> : null}
+                            <div>
+                                <i className="far fa-envelope"></i>
+                                <Field name="email" type="email" className="input" placeholder="email@example.com" autoComplete="off" />
+                            </div>
+
+
+                                {errors.name && touched.name ? ( <span className="errors">{errors.name}</span>) : null}
+                            <div>
+                                <i className="fas fa-user-alt"></i>
+                                <Field name="name" type="text" className="input" placeholder="Raphael Gomes Silva" autoComplete="off" />
+                            </div>
+
+
+                                {errors.password && touched.password ? (<span className="errors">{errors.password}</span>) : null}
+                            <div>
+                                <i className="fas fa-lock"></i>
+                                <Field name="password" type="password" className="input" placeholder="Sua senha" autoComplete="off" />
+                            </div>
+                            
+
+                                {errors.ConfirmPassword && touched.ConfirmPassword ? (<span className="errors">{errors.ConfirmPassword}</span>) : null}
+                            <div>
+                                <i className="fas fa-lock"></i>
+                                <Field name="ConfirmPassword" type="password" className="input" placeholder="Confirme sua senha" autoComplete="off" />
+                            </div>
+
+                            <div id="considerations">
+                                <p>Ao se registrar, você aceita nossos <span>termos de uso</span> e a nossa <span>política de privacidade</span>.</p>
+                            </div>
+                            
                             <button type="submit">CADASTRAR</button>
-                        </div>
-                    </form>
-                </section>
-    
-                <section className="container3">
+                        </Form>
+                        )}
+                    </Formik>
+                </div>
+
+                <div id="container2">
                     <div className="logo_cw">
                         <Logo id="img" />
                     </div>
 
                     <h2>Competency Wall ajuda você a se conectar e compartilhar suas skills e habilidades com pessoas do mundo todo!</h2>
-    
+
                     <Link to="/" id="btn-back"><i className="fas fa-arrow-left"></i> Voltar para login</Link>
-                </section>
+                </div>
             </div>
         )
     }
-
-    
 }
 
-
-
-export default Register 
+export default Register

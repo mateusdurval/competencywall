@@ -1,8 +1,11 @@
 import React from 'react'
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { history } from './history'
 
 import Welcome from '../pages/Welcome'
-import Register2 from '../pages/Register2'
+import Register from '../pages/Register'
+import Home from '../pages/Home'
 
 import { isAuthenticated } from "../services/auth";
 
@@ -21,15 +24,15 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 
 const Routes = () => {
     return (
-        <BrowserRouter>
+        <Router history={history}>
             <Switch>
                 <Route exact={true} path="/" component={Welcome} />
-                <Route path="/register2" component={Register2} />
-                <PrivateRoute path="/app" component={() => <h1>App</h1>} />
+                <Route path="/register" component={Register} />
+                <PrivateRoute path="/app" component={Home} />
 
                 <Route path="*" component={() => <h1>Page not found</h1>} />
             </Switch>
-        </BrowserRouter>
+        </Router>
     )
 }
 

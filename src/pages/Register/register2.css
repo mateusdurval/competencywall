@@ -12,10 +12,10 @@
 }
 
 .body #container {
-    position: absolute;
-    left: 300px;
+    position: relative;
+    left: 20%;
 
-    width: 500px;
+    width: 28%;
     padding: 50px 60px;
     background: #202024;
 
@@ -30,6 +30,15 @@
     font-weight: bold;
     color: #FFF;
     margin-bottom: 20px;
+}
+
+.body #container #messageError {
+    margin-bottom: 2%;
+}
+
+.body #container #messageError p {
+    color:rgb(211, 52, 52);
+    font-weight: bold;
 }
 
 .body #container .form {
@@ -121,8 +130,8 @@
 
 .body #container2 {
     position: absolute;
-    right: 300px;
-    top: 150px;
+    right: 25%;
+    top: 15%;
 
     width: 420px;
     height: 500px;
@@ -154,12 +163,6 @@
 
 .body #container2 #btn-back i {
     margin-right: 7px;
-}
-
-.toast {
-    position: absolute; 
-    top: 0; 
-    right: 0;
 }
 
 .polite {
